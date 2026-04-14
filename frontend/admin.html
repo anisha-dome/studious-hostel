@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hostel Admin</title>
+    <link rel="stylesheet" href="admin.css">
+
+
+</head>
+
+<body>
+
+    <div class="admin-container">
+
+        <div class="admin-header">
+
+            <h1 class="admin-title">📋 Hostel Admin Dashboard</h1>
+
+
+            <div class="admin-actions">
+
+                <button onclick="loadInquiries()" class="refresh-btn">
+                    🔄 Refresh
+                </button>
+
+                <button onclick="exportCSV()" class="export-btn">
+                    Export to Excel
+                </button>
+
+            </div>
+
+            <button onclick="logout()" class="logout-btn">Logout</button>
+
+        </div>
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <div class="stat-title">Total Inquiries</div>
+                <div class="stat-value" id="totalInquiries">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Today's Inquiries</div>
+                <div class="stat-value" id="todayInquiries">0</div>
+            </div>
+
+
+
+        </div>
+
+        <div class="table-card">
+
+            <div class="search-filter">
+
+                <input type="text" id="searchInput" placeholder="Search by name, email or phone...">
+
+                <select id="subjectFilter">
+                    <option value="all">All Subjects</option>
+                    <option value="Room Booking Inquiry">Room Booking Inquiry</option>
+                    <option value="Schedule a Visit">Schedule a Visit</option>
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Feedback">Feedback</option>
+                </select>
+
+            </div>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tableBody"></tbody>
+
+            </table>
+            <script>
+                const token = localStorage.getItem("adminToken");
+
+                if (!token) {
+
+                    window.location.href = "admin-login.html";
+
+                }
+
+                function logout() {
+
+                    localStorage.removeItem("adminToken");
+
+                    window.location.href = "admin-login.html";
+
+                }
+                let inquiries = [];
+                let lastCount = 0;
+
+                async function loadInquiries() {
+
+                    const res = await fetch("http://localhost:5000/admin/inquiries");
+
+                    const data = await res.json();
+
+                    inquiries = data;
+
+                    renderTable(inquiries);
+
+                    updateStats(inquiries);
+
+
+
+
+                    lastCount = data.length;
+
+                }
+
+                async function deleteInquiry(id) {
+
+                    const confirmDelete = confirm("Delete this inquiry?");
+                    if (!confirmDelete) return;
+
+                    await fetch(`http://localhost:5000/admin/inquiries/${id}`, {
+                        method: "DELETE"
+                    });
+
+                    loadInquiries();
+
+                }
+
+                async function markContacted(id) {
+
+                    await fetch(`http://localhost:5000/admin/inquiries/${id}`, {
+                        method: "PUT"
+                    });
+
+                    loadInquiries();
+
+                }
+
+                function updateStats(data) {
+
+                    const today = new Date().toDateString();
+
+                    const todayCount = data.filter(item => {
+                        return new Date(item.createdAt).toDateString() === today;
+                    }).length;
+
+                    document.getElementById("todayInquiries").innerText = todayCount;
+                    document.getElementById("totalInquiries").innerText = data.length;
+
+                }
+
+                function renderTable(data) {
+
+                    const table = document.getElementById("tableBody");
+                    table.innerHTML = "";
+
+                    data.forEach(item => {
+                        const row = document.createElement("tr");
+
+                        if (item.status === "Pending") {
+                            row.classList.add("new-inquiry");
+                        }
+
+                        row.innerHTML = `
+<td>${item.name}</td>
+<td>${item.email}</td>
+<td>${item.phone}</td>
+<td>${item.subject}</td>
+<td>${item.message}</td>
+<td>${new Date(item.createdAt).toLocaleString()}</td>
+
+<td>
+<div class="action-buttons">
+
+${item.status === "Pending"
+                                ? `<button class="contact-btn" onclick="markContacted('${item._id}')">
+Mark Contacted
+</button>`
+                                : `<button class="contact-btn done">✓ Contacted</button>`
+                            }
+
+<button class="delete-btn"
+onclick="deleteInquiry('${item._id}')">
+Delete
+</button>
+
+</div>
+</td>
+
+<td>
+<span class="status ${item.status}">
+${item.status}
+</span>
+</td>
+`;
+
+                        table.appendChild(row);
+
+                    });
+
+                }
+
+                document.getElementById("searchInput").addEventListener("input", function () {
+
+                    const value = this.value.toLowerCase();
+
+                    const filtered = inquiries.filter(item =>
+                        item.name.toLowerCase().includes(value) ||
+                        item.email.toLowerCase().includes(value) ||
+                        item.phone.toLowerCase().includes(value)
+                    );
+
+                    renderTable(filtered);
+
+                });
+
+                document.getElementById("subjectFilter").addEventListener("change", function () {
+
+                    const value = this.value;
+
+                    if (value === "all") {
+                        renderTable(inquiries);
+                        return;
+                    }
+
+                    const filtered = inquiries.filter(item => item.subject === value);
+
+                    renderTable(filtered);
+
+                });
+
+                function exportCSV() {
+
+                    let csv = "Name,Email,Phone,Subject,Message,Date,Status\n";
+
+                    inquiries.forEach(item => {
+
+                        csv += `"${item.name}","${item.email}","${item.phone}","${item.subject}","${item.message.replace(/"/g, '""')}","${new Date(item.createdAt).toLocaleString()}","${item.status}"\n`;
+
+                    });
+
+                    const blob = new Blob([csv], { type: "text/csv" });
+
+                    const url = window.URL.createObjectURL(blob);
+
+                    const a = document.createElement("a");
+
+                    a.href = url;
+                    a.download = "hostel_inquiries.csv";
+
+                    a.click();
+
+                }
+
+                loadInquiries();
+
+
+            </script>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

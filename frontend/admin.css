@@ -1,0 +1,302 @@
+/* ===== ADMIN LAYOUT ===== */
+
+body{
+font-family:"Inter",sans-serif;
+margin:0;
+background:#f4f6fb;
+color:#1f2937;
+}
+
+.admin-container{
+max-width:1200px;
+margin:auto;
+padding:40px 20px;
+}
+
+/* ===== HEADER ===== */
+
+.admin-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.admin-title{
+font-size:30px;
+font-weight:600;
+}
+
+.admin-actions{
+display:flex;
+gap:10px;
+}
+
+.refresh-btn{
+background:#16a34a;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+font-size:14px;
+cursor:pointer;
+font-weight:500;
+}
+
+.refresh-btn:hover{
+background:#15803d;
+}
+
+.new-inquiry{
+background:#fff7cc;
+}
+
+.status.Pending{
+background:#fff7cc;
+color:#92400e;
+}
+
+.status.Contacted{
+background:#bbf7d0;
+color:#065f46;
+}
+
+.export-btn{
+background:#28198f;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+font-size:14px;
+cursor:pointer;
+font-weight:500;
+}
+
+.export-btn:hover{
+background:#244bb7;
+}
+
+.logout-btn{
+background:#ef4444;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+font-size:14px;
+cursor:pointer;
+font-weight:500;
+}
+
+.logout-btn:hover{
+background:#dc2626;
+}
+
+/* ===== STATS CARDS ===== */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.stat-card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.stat-title{
+font-size:14px;
+color:#6b7280;
+}
+
+.stat-value{
+font-size:28px;
+font-weight:600;
+margin-top:6px;
+}
+
+/* ===== TABLE CARD ===== */
+
+.table-card{
+background:white;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+overflow:hidden;
+}
+
+/* ===== TABLE STRUCTURE ===== */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+background:#28198f;
+color:white;
+}
+
+th{
+padding:16px;
+text-align:left;
+font-size:14px;
+font-weight:500;
+border-right:1px solid rgba(255,255,255,0.15);
+}
+
+th:last-child{
+border-right:none;
+}
+
+td{
+padding:16px;
+font-size:14px;
+border-bottom:1px solid #e5e7eb;
+border-right:1px solid #e5e7eb;
+vertical-align:top;
+}
+
+td:last-child{
+border-right:none;
+}
+
+/* row hover */
+
+tbody tr:hover{
+background:#eef2ff;
+}
+
+/* zebra rows */
+
+tbody tr:nth-child(even):not(.new-inquiry){
+background:#f9fafb;
+}
+
+/* ===== MESSAGE COLUMN (LONG TEXT FIX) ===== */
+
+td:nth-child(5){
+max-width:350px;
+word-break:break-word;
+white-space:normal;
+line-height:1.5;
+}
+
+/* ===== ACTION BUTTON CONTAINER ===== */
+
+.action-buttons{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+/* ===== CONTACT BUTTON ===== */
+
+.contact-btn{
+background:#2563eb;
+border:none;
+color:white;
+padding:8px 14px;
+border-radius:6px;
+font-size:13px;
+cursor:pointer;
+font-weight:500;
+transition:0.2s;
+}
+
+.contact-btn:hover{
+background:#1d4ed8;
+}
+
+/* contacted state */
+
+.contact-btn.done{
+background:#22c55e;
+cursor:default;
+}
+
+.contact-btn.done:hover{
+background:#22c55e;
+}
+
+/* ===== DELETE BUTTON ===== */
+
+.delete-btn{
+background:#ef4444;
+border:none;
+color:white;
+padding:8px 14px;
+border-radius:6px;
+font-size:13px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.delete-btn:hover{
+background:#dc2626;
+}
+
+/* ===== STATUS BADGE ===== */
+
+.status{
+padding:5px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+}
+
+.status.Pending{
+background:#fde68a;
+color:#92400e;
+}
+
+.status.Contacted{
+background:#bbf7d0;
+color:#065f46;
+}
+
+/* search bar */
+
+/* search bar */
+
+.search-filter{
+display:flex;
+gap:10px;
+padding:20px;
+}
+
+.search-filter input{
+flex:1;
+padding:12px 16px;
+border-radius:8px;
+border:1px solid #416ed8;
+font-size:14px;
+}
+
+.search-filter select{
+padding:12px 14px;
+border-radius:8px;
+border:1px solid #416ed8;
+font-size:14px;
+background:white;
+cursor:pointer;
+}
+/* ===== MOBILE ===== */
+
+@media(max-width:900px){
+
+.stats{
+grid-template-columns:1fr;
+}
+
+table{
+font-size:13px;
+}
+
+td,th{
+padding:12px;
+}
+
+}
